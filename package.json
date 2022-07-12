@@ -1,0 +1,8 @@
+{
+	"name": "root",
+	"private": true,
+	"workspaces": [
+		"frontend"
+	],
+	"packageManager": "yarn@3.2.1"
+}
