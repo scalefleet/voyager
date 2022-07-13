@@ -47,20 +47,16 @@ impl Pscale {
         Pscale(Command::new("pscale"))
     }
 
+    pub fn auth(&mut self) -> PscaleAuth {
+        PscaleAuth(self.0.arg("auth"))
+    }
+
     pub fn branch(&mut self) -> PscaleBranch {
         PscaleBranch(self.0.arg("branch"))
     }
 
     pub fn database(&mut self) -> PscaleDatabase {
         PscaleDatabase(self.0.arg("database"))
-    }
-
-    pub fn data_imports(&mut self) -> PscaleDataImports {
-        PscaleDataImports(self.0.arg("data-imports"))
-    }
-
-    pub fn deploy_request(&mut self) -> PscaleDeployRequest {
-        PscaleDeployRequest(self.0.arg("deploy-request"))
     }
 
     pub fn org(&mut self) -> PscaleOrg {
@@ -74,12 +70,10 @@ impl Default for Pscale {
     }
 }
 
+pub struct PscaleAuth<'a>(&'a mut Command);
+
 pub struct PscaleBranch<'a>(&'a mut Command);
 
 pub struct PscaleDatabase<'a>(&'a mut Command);
-
-pub struct PscaleDataImports<'a>(&'a mut Command);
-
-pub struct PscaleDeployRequest<'a>(&'a mut Command);
 
 pub struct PscaleOrg<'a>(&'a mut Command);
