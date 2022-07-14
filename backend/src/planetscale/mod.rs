@@ -10,7 +10,7 @@ use std::fs::File;
 use std::io::Read;
 
 #[derive(Deserialize)]
-struct PlanetScaleConfig {
+pub struct PlanetScaleConfig {
     org: String,
     token: String,
 }
