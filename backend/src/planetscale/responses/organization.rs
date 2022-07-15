@@ -1,47 +1,47 @@
-#[derive(serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct OrganizationListResponse {
     #[serde(rename = "type")]
     _type: String,
-    current_page: usize,
-    next_page: Option<usize>,
-    next_page_url: Option<String>,
-    prev_page: Option<usize>,
-    prev_page_url: Option<String>,
-    data: Vec<Organization>,
+    pub current_page: usize,
+    pub next_page: Option<usize>,
+    pub next_page_url: Option<String>,
+    pub prev_page: Option<usize>,
+    pub prev_page_url: Option<String>,
+    pub data: Vec<Organization>,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct Organization {
     #[serde(rename = "type")]
-    _type: String,
-    id: String,
-    name: String,
-    created_at: String,
-    updated_at: String,
-    billing_email: String,
-    sso: bool,
-    sso_directory: bool,
-    can_create_databases: bool,
-    free_databases_remaining: usize,
-    single_tenancy: bool,
-    plan: String,
-    valid_billing_info: bool,
-    admin_only_production_access: bool,
-    has_past_due_invoices: bool,
-    flags: OrganizationFlag,
-    features: OrganizationFeatures,
+    pub _type: String,
+    pub id: String,
+    pub name: String,
+    pub created_at: String,
+    pub updated_at: String,
+    pub billing_email: String,
+    pub sso: bool,
+    pub sso_directory: bool,
+    pub can_create_databases: bool,
+    pub free_databases_remaining: usize,
+    pub single_tenancy: bool,
+    pub plan: String,
+    pub valid_billing_info: bool,
+    pub admin_only_production_access: bool,
+    pub has_past_due_invoices: bool,
+    pub flags: OrganizationFlag,
+    pub features: OrganizationFeatures,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct OrganizationFlag {
-    connect_limited_beta_open: String,
-    new_org_integrations_ui: String,
-    branch_read_only_region: String,
+    pub connect_limited_beta_open: String,
+    pub new_org_integrations_ui: String,
+    pub branch_read_only_region: String,
 }
 
-#[derive(serde::Deserialize)]
+#[derive(Debug, serde::Deserialize)]
 pub struct OrganizationFeatures {
-    insights: bool,
-    sso: bool,
-    single_tenancy: bool,
+    pub insights: bool,
+    pub sso: bool,
+    pub single_tenancy: bool,
 }

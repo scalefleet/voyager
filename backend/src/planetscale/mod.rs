@@ -37,7 +37,10 @@ impl PlanetScaleConfig {
         let mut token = String::new();
         file.read_to_string(&mut token)?;
 
-        Ok(Self { org, token })
+        Ok(Self {
+            org,
+            token: format!("Bearer {token}"),
+        })
     }
 }
 

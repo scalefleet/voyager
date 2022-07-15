@@ -1,8 +1,9 @@
 use backend::{
-    planetscale::PlanetScaleConfig,
+    planetscale::{PlanetScale, PlanetScaleConfig, PlanetScaleOrg},
     tracing::{tracing_subscribe, ResultTracingExt},
     Result,
 };
+use reqwest::{header, ClientBuilder};
 use std::env;
 
 #[tokio::main]
@@ -13,8 +14,30 @@ async fn main() -> Result<()> {
     let pscale_config =
         PlanetScaleConfig::new(format!("{}/.config/planetscale", home_dir).as_str()).maybe_log()?;
 
-    println!("Organization: {}", pscale_config.org);
-    println!("Access token: {}", pscale_config.token);
+    let mut headers = header::HeaderMap::new();
+
+    let mut authorization_value =
+        header::HeaderValue::from_str(pscale_config.token.as_str()).unwrap();
+    authorization_value.set_sensitive(true);
+
+    headers.insert("Authorization", authorization_value);
+
+    headers.insert(
+        "Content-Type",
+        header::HeaderValue::from_static("application/json"),
+    );
+
+    let client = ClientBuilder::new()
+        .default_headers(headers)
+        .build()
+        .unwrap();
+    let planetscale = PlanetScale::new(client);
+
+    let organizations = planetscale.org().list().await?;
+
+    for organization in organizations.data {
+        println!("{}", &organization.name);
+    }
 
     Ok(())
 }
