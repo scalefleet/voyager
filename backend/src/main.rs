@@ -17,7 +17,7 @@ async fn main() -> Result<()> {
     let mut headers = header::HeaderMap::new();
 
     let mut authorization_value =
-        header::HeaderValue::from_str(pscale_config.token.as_str()).unwrap();
+        header::HeaderValue::from_str(pscale_config.bearer_token.as_str()).maybe_log()?;
     authorization_value.set_sensitive(true);
 
     headers.insert("Authorization", authorization_value);
@@ -27,10 +27,7 @@ async fn main() -> Result<()> {
         header::HeaderValue::from_static("application/json"),
     );
 
-    let client = ClientBuilder::new()
-        .default_headers(headers)
-        .build()
-        .unwrap();
+    let client = ClientBuilder::new().default_headers(headers).build()?;
     let planetscale = PlanetScale::new(client);
 
     let organizations = planetscale.org().list().await?;
