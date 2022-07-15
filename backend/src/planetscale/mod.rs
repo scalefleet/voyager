@@ -4,12 +4,11 @@ use crate::{Error, ErrorKind, Result};
 use async_trait::async_trait;
 use reqwest::Client;
 use responses::OrganizationListResponse;
-use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 
-#[derive(Deserialize)]
+#[derive(serde::Deserialize)]
 pub struct PlanetScaleConfig {
     pub org: String,
     pub token: String,
@@ -42,32 +41,32 @@ impl PlanetScaleConfig {
     }
 }
 
-pub struct PlanetScale<'a> {
-    client: &'a Client,
+pub struct PlanetScale {
+    client: Client,
     domain: &'static str,
 }
 
-impl<'a> PlanetScale<'a> {
-    pub fn new(client: &'a Client) -> Self {
+impl PlanetScale {
+    pub fn new(client: Client) -> Self {
         PlanetScale {
             client,
             domain: "https://api.planetscale.com",
         }
     }
 
-    pub fn org(&'a self) -> &impl PlanetScaleOrg<'a> {
+    pub fn org(&self) -> &impl PlanetScaleOrg {
         self
     }
 }
 
 #[async_trait]
-pub trait PlanetScaleOrg<'a> {
-    async fn list(&'a self) -> Result<OrganizationListResponse>;
+pub trait PlanetScaleOrg {
+    async fn list(&self) -> Result<OrganizationListResponse>;
 }
 
 #[async_trait]
-impl<'a> PlanetScaleOrg<'a> for PlanetScale<'a> {
-    async fn list(&'a self) -> Result<OrganizationListResponse> {
+impl PlanetScaleOrg for PlanetScale {
+    async fn list(&self) -> Result<OrganizationListResponse> {
         let request = self
             .client
             .get(format!("{}/v1/organizations", self.domain))
@@ -80,11 +79,11 @@ impl<'a> PlanetScaleOrg<'a> for PlanetScale<'a> {
 }
 
 #[async_trait]
-pub trait PlanetScaleDatabase<'a> {
-    async fn list(&'a self) -> Result<OrganizationListResponse>;
+pub trait PlanetScaleDatabase {
+    async fn list(&self) -> Result<OrganizationListResponse>;
 }
 
 #[async_trait]
-pub trait PlanetScaleBranch<'a> {
-    async fn list(&'a self) -> Result<OrganizationListResponse>;
+pub trait PlanetScaleBranch {
+    async fn list(&self) -> Result<OrganizationListResponse>;
 }
