@@ -1,8 +1,7 @@
 mod error;
 pub mod planetscale;
+mod result;
+mod tracing;
 
 pub use error::*;
-
-use std::result;
-
-pub type Result<T> = result::Result<T, Error>;
+pub use result::*;
