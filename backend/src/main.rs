@@ -60,6 +60,6 @@ struct Cli {
 
 #[derive(clap::Subcommand)]
 enum Command {
-    /// Start the Voyager server on local network, this is the default command.
+    /// Start the Voyager web dashboard.
     Dashboard,
 }
