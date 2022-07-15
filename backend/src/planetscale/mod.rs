@@ -11,8 +11,8 @@ use std::io::Read;
 
 #[derive(Deserialize)]
 pub struct PlanetScaleConfig {
-    org: String,
-    token: String,
+    pub org: String,
+    pub token: String,
 }
 
 impl PlanetScaleConfig {

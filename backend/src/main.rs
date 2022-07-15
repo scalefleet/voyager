@@ -1,12 +1,20 @@
-use backend::{planetscale::PlanetScaleConfig, Error, ErrorKind, Result};
+use backend::{
+    planetscale::PlanetScaleConfig,
+    tracing::{tracing_subscribe, ResultTracingExt},
+    Result,
+};
+use std::env;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = if let Ok(config) = PlanetScaleConfig::new("/home/izznatsir/.config/planetscale") {
-        config
-    } else {
-        return Err(Error::new(ErrorKind::Unauthenticated));
-    };
+    tracing_subscribe().expect("Tracing subscription failed.");
+
+    let home_dir = env::var("HOME").unwrap();
+    let pscale_config =
+        PlanetScaleConfig::new(format!("{}/.config/planetscale", home_dir).as_str()).maybe_log()?;
+
+    println!("Organization: {}", pscale_config.org);
+    println!("Access token: {}", pscale_config.token);
 
     Ok(())
 }

@@ -11,11 +11,11 @@ impl<T> ResultTracingExt for Result<T> {
             match error.kind {
                 ErrorKind::BadRequest => {
                     let kind = format!("{:?}", error.kind);
-                    error!(kind);
+                    error!(target: "planetscale", kind, "Failed to fetch data.");
                 }
                 ErrorKind::Unauthenticated => {
                     let kind = format!("{:?}", error.kind);
-                    error!(kind);
+                    error!(target: "planetscale", kind, "User is not authenticated.");
                 }
             }
         }
