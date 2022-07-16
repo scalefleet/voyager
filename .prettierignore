@@ -1,0 +1,16 @@
+# Node
+.cache
+.yarn
+**/build
+**/dist
+**/node_modules
+
+# Rust
+backend
+Cargo.*
+**/target
+**/*.rs.bk
+
+# Etc.
+**/.env
+**/.env.*

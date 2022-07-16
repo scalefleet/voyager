@@ -4,5 +4,17 @@
 	"workspaces": [
 		"frontend"
 	],
+	"scripts": {
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"prettier": "^2.7.1",
+		"typescript": "^4.7.4"
+	},
+	"prettier": {
+		"singleQuote": true,
+		"tabWidth": 4,
+		"useTabs": true
+	},
 	"packageManager": "yarn@3.2.1"
 }
