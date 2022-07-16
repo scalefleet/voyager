@@ -1,24 +1,16 @@
-use backend::{
-    planetscale::{PlanetScale, PlanetScaleConfig},
-    tracing::tracing_subscribe,
-    Result,
-};
-use std::env;
+use backend::{planetscale::PlanetScale, tracing::tracing_subscribe, Configuration, Result};
 use ureq::AgentBuilder;
 
 fn main() -> Result<()> {
     tracing_subscribe().expect("Tracing subscription failed.");
 
-    let home_dir = env::var("HOME").unwrap();
+    let configuration = Configuration::default();
 
     let agent = AgentBuilder::new().https_only(true).build();
-    let config = PlanetScaleConfig::new(format!("{home_dir}/.config/planetscale").as_str())?;
 
-    let planetscale = PlanetScale::new(agent, &config);
+    let planetscale = PlanetScale::new(agent, &configuration)?;
 
-    let organizations = planetscale.org().list()?;
-
-    for organization in organizations.data {
+    for organization in planetscale.org().list()?.data {
         println!("{}", &organization.name);
     }
 
