@@ -41,16 +41,8 @@ impl std::fmt::Display for Error {
     }
 }
 
-impl From<reqwest::Error> for Error {
-    fn from(_: reqwest::Error) -> Self {
-        Self {
-            kind: ErrorKind::BadRequest,
-        }
-    }
-}
-
-impl From<reqwest::header::InvalidHeaderValue> for Error {
-    fn from(_: reqwest::header::InvalidHeaderValue) -> Self {
+impl From<ureq::Error> for Error {
+    fn from(_: ureq::Error) -> Self {
         Self {
             kind: ErrorKind::BadRequest,
         }

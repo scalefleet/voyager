@@ -1,34 +1,33 @@
 use crate::{
-    planetscale::{organization::PlanetScaleOrg, responses::OrganizationListResponse},
+    planetscale::{responses::OrganizationListResponse, PlanetScaleConfig, PlanetScaleOrg},
     Result,
 };
-use async_trait::async_trait;
-use reqwest::Client;
+use ureq::Agent;
 
 pub struct PlanetScale {
-    pub client: Client,
-    pub domain: &'static str,
+    pub agent: Agent,
+    pub base_url: String,
+    pub bearer_token: String,
 }
 
 impl PlanetScale {
-    pub fn new(client: Client) -> Self {
+    pub fn new(agent: Agent, config: &PlanetScaleConfig) -> Self {
         PlanetScale {
-            client,
-            domain: "https://api.planetscale.com",
+            agent,
+            base_url: "https://api.planetscale.com".to_owned(),
+            bearer_token: config.bearer_token.to_owned(),
         }
     }
 
-    pub fn org(&self) -> &impl PlanetScaleOrg {
+    pub fn org(&self) -> &dyn PlanetScaleOrg {
         self
     }
 }
 
-#[async_trait]
 pub trait PlanetScaleDatabase {
-    async fn list(&self) -> Result<OrganizationListResponse>;
+    fn list(&self) -> Result<OrganizationListResponse>;
 }
 
-#[async_trait]
 pub trait PlanetScaleBranch {
-    async fn list(&self) -> Result<OrganizationListResponse>;
+    fn list(&self) -> Result<OrganizationListResponse>;
 }

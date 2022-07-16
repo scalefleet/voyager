@@ -2,22 +2,19 @@ use crate::{
     planetscale::{responses::OrganizationListResponse, PlanetScale},
     Result,
 };
-use async_trait::async_trait;
 
-#[async_trait]
 pub trait PlanetScaleOrg {
-    async fn list(&self) -> Result<OrganizationListResponse>;
+    fn list(&self) -> Result<OrganizationListResponse>;
 }
 
-#[async_trait]
 impl PlanetScaleOrg for PlanetScale {
-    async fn list(&self) -> Result<OrganizationListResponse> {
-        let request = self
-            .client
-            .get(format!("{}/v1/organizations", self.domain))
-            .build()?;
-
-        let response: OrganizationListResponse = self.client.execute(request).await?.json().await?;
+    fn list(&self) -> Result<OrganizationListResponse> {
+        let response: OrganizationListResponse = self
+            .agent
+            .get(format!("{}/v1/organizations", &self.base_url).as_str())
+            .set("Authorization", self.bearer_token.as_str())
+            .call()?
+            .into_json()?;
 
         Ok(response)
     }

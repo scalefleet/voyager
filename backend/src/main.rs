@@ -1,36 +1,22 @@
 use backend::{
-    planetscale::{PlanetScale, PlanetScaleConfig, PlanetScaleOrg},
-    tracing::{tracing_subscribe, ResultTracingExt},
+    planetscale::{PlanetScale, PlanetScaleConfig},
+    tracing::tracing_subscribe,
     Result,
 };
-use reqwest::{header, ClientBuilder};
 use std::env;
+use ureq::AgentBuilder;
 
-#[tokio::main]
-async fn main() -> Result<()> {
+fn main() -> Result<()> {
     tracing_subscribe().expect("Tracing subscription failed.");
 
     let home_dir = env::var("HOME").unwrap();
-    let pscale_config =
-        PlanetScaleConfig::new(format!("{}/.config/planetscale", home_dir).as_str()).maybe_log()?;
 
-    let mut headers = header::HeaderMap::new();
+    let agent = AgentBuilder::new().https_only(true).build();
+    let config = PlanetScaleConfig::new(format!("{home_dir}/.config/planetscale").as_str())?;
 
-    let mut authorization_value =
-        header::HeaderValue::from_str(pscale_config.bearer_token.as_str()).maybe_log()?;
-    authorization_value.set_sensitive(true);
+    let planetscale = PlanetScale::new(agent, &config);
 
-    headers.insert("Authorization", authorization_value);
-
-    headers.insert(
-        "Content-Type",
-        header::HeaderValue::from_static("application/json"),
-    );
-
-    let client = ClientBuilder::new().default_headers(headers).build()?;
-    let planetscale = PlanetScale::new(client);
-
-    let organizations = planetscale.org().list().await?;
+    let organizations = planetscale.org().list()?;
 
     for organization in organizations.data {
         println!("{}", &organization.name);
