@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"allowJs": false,
+		"jsx": "react",
+		"lib": ["DOM", "ESNext"],
+		"skipLibCheck": true,
+		"strict": true
+	},
+	"include": ["vite.config.ts", "src"]
+}
