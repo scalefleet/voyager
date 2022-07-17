@@ -1,8 +1,8 @@
-mod client;
-mod config;
-mod organization;
+mod agent;
+mod configuration;
+mod queries;
 mod responses;
 
-pub use client::*;
-pub use config::*;
-pub use organization::*;
+pub use agent::*;
+pub use configuration::*;
+pub use queries::*;
