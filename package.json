@@ -5,7 +5,8 @@
 		"frontend"
 	],
 	"scripts": {
-		"format": "prettier --write ."
+		"format": "prettier --write .",
+		"dev": "yarn workspace frontend dev"
 	},
 	"devDependencies": {
 		"prettier": "^2.7.1",
