@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Outlet, useLoaderData } from 'react-router-dom';
-import { Listbox } from '@headlessui/react';
-import SelectorIcon from '../icons/selector.js';
+import Listbox from '../components/listbox.js';
 
 export async function loader() {
 	return {
@@ -53,178 +52,32 @@ export default function Index() {
 				<div className="h-12"></div>
 				<div>
 					<Listbox
-						name="organization"
-						value={selectedOrganization}
-						onChange={setSelectedOrganization}
-					>
-						<div className="relative border-y border-y-neutral-800">
-							<Listbox.Label className="w-full px-4 text-[0.625rem] uppercase tracking-widest leading-none">
-								Organization
-							</Listbox.Label>
-							<div className="h-1" />
-							<div className="relative flex">
-								<Listbox.Button className="w-full px-4 py-2 flex justify-between items-center text-left bg-neutral-800">
-									<span>{selectedOrganization}</span>
-									<SelectorIcon />
-								</Listbox.Button>
-								<Listbox.Options className="absolute left-full w-full ml-2 border border-neutral-800">
-									{organization.options.map(
-										(organization) => {
-											return (
-												<Listbox.Option
-													key={organization}
-													value={organization}
-													className={({
-														active,
-														selected,
-													}) =>
-														`w-full px-4 py-2 cursor-pointer ${
-															selected
-																? 'bg-neutral-800'
-																: active
-																? 'bg-neutral-700'
-																: 'bg-neutral-900'
-														}`
-													}
-												>
-													{organization}
-												</Listbox.Option>
-											);
-										}
-									)}
-								</Listbox.Options>
-							</div>
-						</div>
-					</Listbox>
+						name="Organization"
+						options={organization.options}
+						selected={selectedOrganization}
+						setSelected={setSelectedOrganization}
+					/>
 					<div className="h-2"></div>
 					<Listbox
-						name="database"
-						value={selectedDatabase}
-						onChange={setSelectedDatabase}
-					>
-						<div className="relative border-y border-y-neutral-800">
-							<Listbox.Label className="w-full px-4 text-[0.625rem] uppercase tracking-widest leading-none">
-								Database
-							</Listbox.Label>
-							<div className="h-1" />
-							<div className="relative flex">
-								<Listbox.Button className="w-full px-4 py-2 flex justify-between items-center text-left bg-neutral-800">
-									<span>{selectedDatabase}</span>
-									<SelectorIcon />
-								</Listbox.Button>
-								<Listbox.Options className="absolute left-full w-full ml-2 border border-neutral-800">
-									{database.options.map((database) => {
-										return (
-											<Listbox.Option
-												key={database}
-												value={database}
-												className={({
-													active,
-													selected,
-												}) =>
-													`w-full px-4 py-2 cursor-pointer ${
-														selected
-															? 'bg-neutral-800'
-															: active
-															? 'bg-neutral-700'
-															: 'bg-neutral-900'
-													}`
-												}
-											>
-												{database}
-											</Listbox.Option>
-										);
-									})}
-								</Listbox.Options>
-							</div>
-						</div>
-					</Listbox>
+						name="Database"
+						options={database.options}
+						selected={selectedDatabase}
+						setSelected={setSelectedDatabase}
+					/>
 					<div className="h-2"></div>
 					<Listbox
-						name="branch"
-						value={selectedBranch}
-						onChange={setSelectedBranch}
-					>
-						<div className="relative border-y border-y-neutral-800">
-							<Listbox.Label className="w-full px-4 text-[0.625rem] uppercase tracking-widest leading-none">
-								Branch
-							</Listbox.Label>
-							<div className="h-1" />
-							<div className="relative flex">
-								<Listbox.Button className="w-full px-4 py-2 flex justify-between items-center text-left bg-neutral-800">
-									<span>{selectedBranch}</span>
-									<SelectorIcon />
-								</Listbox.Button>
-								<Listbox.Options className="absolute left-full w-full ml-2 border border-neutral-800">
-									{branch.options.map((branch) => {
-										return (
-											<Listbox.Option
-												key={branch}
-												value={branch}
-												className={({
-													active,
-													selected,
-												}) =>
-													`w-full px-4 py-2 cursor-pointer ${
-														selected
-															? 'bg-neutral-800'
-															: active
-															? 'bg-neutral-700'
-															: 'bg-neutral-900'
-													}`
-												}
-											>
-												{branch}
-											</Listbox.Option>
-										);
-									})}
-								</Listbox.Options>
-							</div>
-						</div>
-					</Listbox>
+						name="Branch"
+						options={branch.options}
+						selected={selectedBranch}
+						setSelected={setSelectedBranch}
+					/>
 					<div className="h-2"></div>
 					<Listbox
-						name="schema"
-						value={selectedSchema}
-						onChange={setSelectedSchema}
-					>
-						<div className="relative border-y border-y-neutral-800">
-							<Listbox.Label className="w-full px-4 text-[0.625rem] uppercase tracking-widest leading-none">
-								Schema
-							</Listbox.Label>
-							<div className="h-1" />
-							<div className="relative flex">
-								<Listbox.Button className="w-full px-4 py-2 flex justify-between items-center text-left bg-neutral-800">
-									<span>{selectedSchema}</span>
-									<SelectorIcon />
-								</Listbox.Button>
-								<Listbox.Options className="absolute left-full w-full ml-2 border border-neutral-800">
-									{schema.options.map((schema) => {
-										return (
-											<Listbox.Option
-												key={schema}
-												value={schema}
-												className={({
-													active,
-													selected,
-												}) =>
-													`w-full px-4 py-2 cursor-pointer ${
-														selected
-															? 'bg-neutral-800'
-															: active
-															? 'bg-neutral-700'
-															: 'bg-neutral-900'
-													}`
-												}
-											>
-												{schema}
-											</Listbox.Option>
-										);
-									})}
-								</Listbox.Options>
-							</div>
-						</div>
-					</Listbox>
+						name="Schema"
+						options={schema.options}
+						selected={selectedSchema}
+						setSelected={setSelectedSchema}
+					/>
 					<div className="h-2 border-b border-b-neutral-800"></div>
 				</div>
 			</aside>
