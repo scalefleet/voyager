@@ -13,11 +13,11 @@ use ureq::AgentBuilder;
 fn main() {
     tracing_subscribe().expect_and_log("tracing subscription failed");
 
+    let cli = Cli::parse();
+
     println!();
     println!("{} {}", "Voyager".blue(), "v.0.0.0".green());
     println!();
-
-    let cli = Cli::parse();
 
     tracing::info!("resolving configurations");
     let mut configuration = Configuration::default();

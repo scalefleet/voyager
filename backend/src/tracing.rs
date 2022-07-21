@@ -1,7 +1,8 @@
 use colored::Colorize;
 use std::{error, ops::AddAssign, result};
 use tracing::{
-    dispatcher::SetGlobalDefaultError, error, subscriber::set_global_default, Level, Subscriber,
+    dispatcher::SetGlobalDefaultError, error, info, subscriber::set_global_default, Level,
+    Subscriber,
 };
 use tracing_subscriber::{
     filter::LevelFilter,
@@ -20,7 +21,9 @@ pub fn tracing_subscribe() -> Result<(), SetGlobalDefaultError> {
 }
 
 pub trait ResultTracingExt<T> {
-    fn maybe_log(self) -> Self;
+    fn on_ok_then_log(self, message: &str) -> Self;
+    fn on_err_then_log(self, message: &str) -> Self;
+    fn on_err_then_log_display(self) -> Self;
     fn expect_and_log(self, message: &str) -> T;
     fn unwrap_or_log(self) -> T;
 }
@@ -29,7 +32,24 @@ impl<T, E> ResultTracingExt<T> for result::Result<T, E>
 where
     E: error::Error,
 {
-    fn maybe_log(self) -> Self {
+    fn on_ok_then_log(self, message: &str) -> Self {
+        if self.is_ok() {
+            info!("{message}");
+        }
+
+        self
+    }
+
+    fn on_err_then_log(self, message: &str) -> Self {
+        if let Err(error) = &self {
+            let kind = format!("{:?}", error);
+            error!("{}: {}", kind.bold().red(), message);
+        }
+
+        self
+    }
+
+    fn on_err_then_log_display(self) -> Self {
         if let Err(error) = &self {
             let kind = format!("{:?}", error);
             error!("{}: {}", kind.bold().red(), error);
@@ -41,7 +61,7 @@ where
     fn expect_and_log(self, message: &str) -> T {
         if let Err(error) = &self {
             let kind = format!("{:?}", error);
-            error!("{}: {}: {}", kind.bold().red(), message, error);
+            error!("{}: {}", kind.bold().red(), message);
 
             std::process::exit(1)
         }
