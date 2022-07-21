@@ -1,9 +1,11 @@
+use astra::{Body, Response, Server};
 use backend::{
     planetscale::{PlanetScale, PscaleConfiguration},
     tracing::{tracing_subscribe, ResultTracingExt},
     Configuration,
 };
 use clap::Parser;
+use colored::Colorize;
 use std::fs::File;
 use std::io::Read;
 use ureq::AgentBuilder;
@@ -11,8 +13,13 @@ use ureq::AgentBuilder;
 fn main() {
     tracing_subscribe().expect_and_log("tracing subscription failed");
 
+    println!();
+    println!("{} {}", "Voyager".blue(), "v.0.0.0".green());
+    println!();
+
     let cli = Cli::parse();
 
+    tracing::info!("resolving configurations");
     let mut configuration = Configuration::default();
 
     let pscale_configuration =
@@ -39,16 +46,15 @@ fn main() {
 
     let agent = AgentBuilder::new().https_only(true).build();
 
-    let planetscale = PlanetScale::new(agent, &configuration).unwrap_or_log();
+    let _planetscale = PlanetScale::new(agent, &configuration).unwrap_or_log();
 
-    match &cli.command {
-        Some(Command::Dashboard) => println!("aye"),
-        None => {
-            for organization in planetscale.org().list().unwrap_or_log().data {
-                println!("{}", &organization.name);
-            }
-        }
-    }
+    tracing::info!("configurations resolved");
+
+    tracing::info!("starting Voyager server at http://localhost:3000");
+
+    Server::bind("localhost:3000")
+        .serve(|_| Response::new(Body::new("ok")))
+        .expect_and_log("failed to start server");
 }
 
 /// PlanetScale GUI tool that simplify your local development workflow.

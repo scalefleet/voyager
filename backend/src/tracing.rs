@@ -1,13 +1,22 @@
-use std::{error, result};
-use tracing::{dispatcher::SetGlobalDefaultError, error};
-use tracing_subscriber::{filter::LevelFilter, prelude::*, Registry};
+use colored::Colorize;
+use std::{error, ops::AddAssign, result};
+use tracing::{
+    dispatcher::SetGlobalDefaultError, error, subscriber::set_global_default, Level, Subscriber,
+};
+use tracing_subscriber::{
+    filter::LevelFilter,
+    fmt::{self, format, FmtContext, FormatEvent, FormatFields},
+    prelude::*,
+    registry::LookupSpan,
+    Registry,
+};
 
 pub fn tracing_subscribe() -> Result<(), SetGlobalDefaultError> {
     let subscriber = Registry::default()
-        .with(tracing_subscriber::fmt::layer().pretty())
+        .with(fmt::layer().event_format(EventLogFormatter))
         .with(LevelFilter::INFO);
 
-    tracing::subscriber::set_global_default(subscriber)
+    set_global_default(subscriber)
 }
 
 pub trait ResultTracingExt<T> {
@@ -23,7 +32,7 @@ where
     fn maybe_log(self) -> Self {
         if let Err(error) = &self {
             let kind = format!("{:?}", error);
-            error!(target: "planetscale", kind, "{}", error);
+            error!("{}: {}", kind.bold().red(), error);
         }
 
         self
@@ -32,7 +41,7 @@ where
     fn expect_and_log(self, message: &str) -> T {
         if let Err(error) = &self {
             let kind = format!("{:?}", error);
-            error!(target: "planetscale", kind, "{}: {}", message, error);
+            error!("{}: {}: {}", kind.bold().red(), message, error);
 
             std::process::exit(1)
         }
@@ -43,11 +52,47 @@ where
     fn unwrap_or_log(self) -> T {
         if let Err(error) = &self {
             let kind = format!("{:?}", error);
-            error!(target: "planetscale", kind, "{}", error);
+            error!("{}: {}", kind.bold().red(), error);
 
             std::process::exit(1)
         }
 
         self.unwrap()
+    }
+}
+
+struct EventLogFormatter;
+
+impl<S, N> FormatEvent<S, N> for EventLogFormatter
+where
+    S: Subscriber + for<'a> LookupSpan<'a>,
+    N: for<'a> FormatFields<'a> + 'static,
+{
+    fn format_event(
+        &self,
+        ctx: &FmtContext<'_, S, N>,
+        mut writer: format::Writer<'_>,
+        event: &tracing::Event<'_>,
+    ) -> std::fmt::Result {
+        let metadata = event.metadata();
+
+        let mut log = String::new();
+
+        match *metadata.level() {
+            Level::ERROR => {
+                log.add_assign("  error: ".bold().red().to_string().as_str());
+            }
+            Level::WARN => {
+                log.add_assign("warning: ".bold().yellow().to_string().as_str());
+            }
+            Level::INFO => {
+                log.add_assign("   info: ".bold().blue().to_string().as_str());
+            }
+            _ => {}
+        }
+
+        write!(&mut writer, "{}", log)?;
+        ctx.field_format().format_fields(writer.by_ref(), event)?;
+        writeln!(&mut writer)
     }
 }

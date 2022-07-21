@@ -18,7 +18,7 @@ impl PscaleConfiguration {
         let config: Self = if let Ok(config) = serde_yaml::from_str(content.as_str()) {
             config
         } else {
-            return Err(Error::new(ErrorKind::NotAuthenticated));
+            return Err(Error::new(ErrorKind::Unauthenticated));
         };
 
         Ok(config)

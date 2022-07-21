@@ -3,7 +3,7 @@ pub struct Error {
 }
 
 pub enum ErrorKind {
-    NotAuthenticated,
+    Unauthenticated,
 }
 
 impl Error {
@@ -17,8 +17,8 @@ impl std::error::Error for Error {}
 impl std::fmt::Debug for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.kind {
-            ErrorKind::NotAuthenticated => {
-                write!(f, "NotAuthenticated")
+            ErrorKind::Unauthenticated => {
+                write!(f, "Unauthenticated")
             }
         }
     }
@@ -27,8 +27,11 @@ impl std::fmt::Debug for Error {
 impl std::fmt::Display for Error {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self.kind {
-            ErrorKind::NotAuthenticated => {
-                write!(f, "NotAuthenticated")
+            ErrorKind::Unauthenticated => {
+                write!(
+                    f,
+                    "you have to login or provide a service token to use this app"
+                )
             }
         }
     }
@@ -37,7 +40,7 @@ impl std::fmt::Display for Error {
 impl From<std::io::Error> for Error {
     fn from(_: std::io::Error) -> Self {
         Self {
-            kind: ErrorKind::NotAuthenticated,
+            kind: ErrorKind::Unauthenticated,
         }
     }
 }
