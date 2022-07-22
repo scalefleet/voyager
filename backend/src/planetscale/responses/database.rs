@@ -1,3 +1,7 @@
+use crate::planetscale::responses;
+
+pub type DatabaseList = responses::List<Database>;
+
 #[derive(Debug, serde::Deserialize)]
 pub struct Database {
     #[serde(rename = "type")]

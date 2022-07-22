@@ -1,3 +1,7 @@
+use crate::planetscale::responses;
+
+pub type OrganizationList = responses::List<Organization>;
+
 #[derive(Debug, serde::Deserialize)]
 pub struct Organization {
     #[serde(rename = "type")]

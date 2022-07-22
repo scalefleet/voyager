@@ -1,8 +1,7 @@
 use astra::{Body, Response, Server};
 use backend::{
-    planetscale::{PlanetScale, PscaleConfiguration},
     tracing::{tracing_subscribe, ResultTracingExt},
-    Configuration,
+    Context, PlanetScale,
 };
 use clap::Parser;
 use colored::Colorize;
@@ -19,36 +18,33 @@ fn main() {
     println!("{} {}", "Voyager".blue(), "v.0.0.0".green());
     println!();
 
-    tracing::info!("resolving configurations");
-    let mut configuration = Configuration::default();
-
-    let pscale_configuration =
-        PscaleConfiguration::new(&configuration.planetscale_directory).unwrap_or_log();
-
-    configuration.planetscale_organization = pscale_configuration.organization;
+    tracing::info!("resolving context");
+    let mut context = Context::default();
 
     if let Some(service_token) = cli.service_token {
-        configuration.planetscale_access_token = Some(service_token);
+        context.service_token = service_token;
+        context.access_token = context.service_token.clone();
     } else {
         let file = File::open(format!(
             "{}/access-token",
-            &configuration.planetscale_directory
+            &context.global_planetscale_directory
         ));
 
         if let Ok(mut file) = file {
             let mut access_token = String::new();
 
             file.read_to_string(&mut access_token)
-                .expect_and_log("failed to read access token");
-            configuration.planetscale_access_token = Some(access_token);
+                .expect_and_log("failed to read access token from file");
+
+            context.access_token = access_token;
         }
     }
 
     let agent = AgentBuilder::new().https_only(true).build();
 
-    let _planetscale = PlanetScale::new(agent, &configuration).unwrap_or_log();
+    let _planetscale = PlanetScale::new(agent, &context).unwrap_or_log();
 
-    tracing::info!("configurations resolved");
+    tracing::info!("context resolved");
 
     tracing::info!("starting Voyager server at http://localhost:3000");
 
